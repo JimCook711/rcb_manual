@@ -38,22 +38,16 @@ echo "\nPause complete."
 echo "\n>>> 4. Assigning Permission Sets..."
 sfdx force:apex:execute -f $PERM_SET_SCRIPT
 
-echo "\n>>> x. Deploying Expression Sets (Pricing Procedures)..."
+echo "\n>>> 5. Deploying Expression Sets (Pricing Procedures)..."
 sfdx project deploy start -d force-app/main/default/settings
 
-echo "\n>>> 5. Deploying Context Definitions..."
-sfdx project deploy start -d force-app/main/default/contextDefinitions
-
 echo "\n>>> 6. Deploying Expression Sets (Pricing Procedures)..."
-sfdx project deploy start -d force-app/main/default/expressionSetDefinition
-
-echo "\n>>> 7. Deploying Expression Sets (Pricing Procedures)..."
 sfdx project deploy start -d force-app/main/default/layouts
 
-echo "\n>>> 8. Executing Apex script to create core data..."
+echo "\n>>> 7. Executing Apex script to create core data..."
 sfdx force:apex:execute -f $SETUP_DATA_SCRIPT
 
-echo "\n>>> 9. Opening the new scratch org..."
+echo "\n>>> 8. Opening the new scratch org..."
 sfdx force:org:display -u $ORG_ALIAS
 
 echo "\n✅ --- Org setup complete! ---"
