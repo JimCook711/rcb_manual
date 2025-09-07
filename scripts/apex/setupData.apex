@@ -393,6 +393,8 @@ private Quote getOrCreateQuote(String name, Opportunity opp, Account acc, Contac
         Pricebook2Id = standardPricebook.Id,
         ExpirationDate = Date.today().addDays(30),
         Description = 'Quote created for ' + acc.Name + ' via automated script.',
+        QuoteAccountId = acc.Id,
+        BillToContactId = con.Id,
         ContactId = con.Id,
         Phone = con.Phone,
         Email = con.Email,

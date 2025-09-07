@@ -26,6 +26,7 @@ List<String> permSetNames = new List<String>{
     'ProductDiscoveryAdmin',
     'ProductDiscoveryUser',
     'RevLifecycleManagementCoreCPQAssetization',
+    'RevLifecycleManagementCreateOrderFromQuote',
     'RevLifecycleManagementCreateContractApi',
     'RevLifecycleManagementInitiateAmendmentApi',
     'RevLifecycleManagementInitiateCancellationApi',

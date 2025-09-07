@@ -38,16 +38,19 @@ echo "\nPause complete."
 echo "\n>>> 4. Assigning Permission Sets..."
 sfdx force:apex:execute -f $PERM_SET_SCRIPT
 
-echo "\n>>> 5. Deploying Expression Sets (Pricing Procedures)..."
+echo "\n>>> 5. Enabeling Billing"
 sfdx project deploy start -d force-app/main/default/settings
 
-echo "\n>>> 6. Deploying Expression Sets (Pricing Procedures)..."
+echo "\n>>> 6. Deploying Order To Billing Schedule flow"
+sfdx project deploy start -d force-app/main/default/flows
+
+echo "\n>>> 7. Deploying Page Layouts"
 sfdx project deploy start -d force-app/main/default/layouts
 
-echo "\n>>> 7. Executing Apex script to create core data..."
+echo "\n>>> 8. Executing Apex script to create core data..."
 sfdx force:apex:execute -f $SETUP_DATA_SCRIPT
 
-echo "\n>>> 8. Opening the new scratch org..."
+echo "\n>>> 9. Opening the new scratch org..."
 sfdx force:org:display -u $ORG_ALIAS
 
 echo "\n✅ --- Org setup complete! ---"
