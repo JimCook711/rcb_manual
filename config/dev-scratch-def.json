@@ -1,0 +1,93 @@
+{
+  "orgName": "Chargent Dev",
+  "edition": "Developer",
+  "features": [
+    "Communities",
+    "Sites",
+    "SiteDotCom",
+    "BusinessRulesEngine",
+    "B2BCommerce",
+    "DecisionTable",
+    "OrderSaveLogicEnabled",
+    "OrderManagement",
+    "OrderSaveBehaviorBoth",
+    "PartnerCommunity",
+    "CustomerCommunityPlus",
+    "ContextService",
+    "CoreCpq",
+    "SalesforcePricing",
+    "SalesforceConfiguratorEngine",
+    "UsageManagement",
+    "BillingAdvanced",
+    "InvoiceManagement",
+    "DocGen",
+    "EnableSetPasswordInApi",
+    "ProductCatalogManagementPCAddOn",
+    "DataProcessingEngine",
+    "Einstein1AIPlatform"
+],
+  "settings": {
+      "lightningExperienceSettings": {
+          "enableS1DesktopEnabled": true
+      },
+      "communitiesSettings": {
+          "enableNetworksEnabled": true
+      },
+      "customAddressFieldSettings": {
+          "enableCustomAddressField": true
+      },
+      "currencySettings": {
+          "enableMultiCurrency": false
+      },
+      "experienceBundleSettings": {
+          "enableExperienceBundleMetadata": true
+      },
+      "securitySettings": {
+          "sessionSettings": {
+              "lockerServiceNext": false
+          }
+      },
+      "apexSettings": {
+          "enableDisableParallelApexTesting": true
+      },
+      "industriesContextSettings": {
+          "enableContextDefinitions": true
+      },
+      "opportunitySettings": {
+          "enableOpportunityTeam": true
+      },
+      "revenueManagementSettings": {
+          "enableCoreCPQ": true
+      },
+      "orderManagementSettings": {
+          "enableOrderManagement": true
+      },
+      "orderSettings": {
+          "enableOrders": true,
+          "enableEnhancedCommerceOrders": true,
+          "enableZeroQuantity": true,
+          "enableNegativeQuantity": true
+      },
+      "quoteSettings": {
+          "enableQuote": true,
+          "enableQuotesWithoutOppEnabled": true
+      },
+      "industriesPricingSettings": {
+          "enableSalesforcePricing": true
+      },
+      "industriesRatingSettings": {
+          "enableRating": true,
+          "enableRatingWaterfall": true,
+          "enableRatingWaterfallPersistence": true
+      },
+      "DynamicFulfillmentOrchestratorSettings": {
+          "enableDFOPref": true
+      },
+      "paymentsSettings": {
+          "enablePayments": true
+      },
+      "einsteinGptSettings": {
+          "enableEinsteinGptPlatform": true
+      }
+  }
+}
