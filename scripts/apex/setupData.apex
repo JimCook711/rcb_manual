@@ -1,11 +1,10 @@
 /*
 This script automates the creation of foundational data for a
 functional Revenue Cloud scratch org.
-
 NOTE: The automated cleanup and recreation of Pricing Procedures
-has been removed. Please configure Context Definitions and
+has been removed.
+Please configure Context Definitions and
 Pricing Procedures manually as per your setup guide.
-
 Execution: sfdx force:apex:execute -f scripts/apex/setupData.apex
 */
 
@@ -17,7 +16,6 @@ try {
     BillingTreatment bt = createBillingTreatment(bp.Id, le.Id);
     BillingTreatmentItem bti = createBillingTreatmentItem(bt.Id);
     activateBillingRecords(bp, bt, bti);
-
     // --- Part 2: Tax Setup ---
     System.debug('Executing Part 2: Tax Setup');
     TaxPolicy taxPolicy = createTaxPolicy();
@@ -31,11 +29,9 @@ try {
     // --- Part 4: Product Catalog Setup ---
     System.debug('Executing Part 4: Product Catalog Setup');
     createProductCatalogAndModels();
-
     // --- Part 5: Transactional Data Creation ---
     System.debug('Executing Part 5: Transactional Data Creation');
     createTransactionalData();
-
 } catch (Exception e) {
     System.debug('ERROR during setup script execution: ' + e.getMessage());
     System.debug('Stack Trace: ' + e.getStackTraceString());
@@ -213,13 +209,11 @@ private void createProductCatalogAndModels() {
         'Monthly' => getOrCreateSellingModel('Monthly', 'TermDefined', 1, 'Months'),
         'Yearly' => getOrCreateSellingModel('Yearly', 'TermDefined', 1, 'Annual')
     };
-
     List<Map<String, Object>> productDefs = new List<Map<String, Object>>{
         new Map<String, Object>{'Name' => 'Down Payment', 'Code' => 'DEMO-001', 'Model' => 'One Time', 'Price' => 700.00},
         new Map<String, Object>{'Name' => 'Monthly Payment', 'Code' => 'DEMO-002', 'Model' => 'Monthly', 'Price' => 200.00},
         new Map<String, Object>{'Name' => 'Annual Payment', 'Code' => 'DEMO-003', 'Model' => 'Yearly', 'Price' => 1000.00}
     };
-    
     List<String> productCodes = new List<String>();
     for(Map<String, Object> def : productDefs) {
         productCodes.add((String)def.get('Code'));
@@ -239,6 +233,9 @@ private void createProductCatalogAndModels() {
     if(existingProductCodes.size() == productDefs.size()){
         System.debug('INFO: All demo products already exist. Re-creating pricebook entries.');
     }
+    
+    // --- NEW: List to hold product-to-category assignments ---
+    List<ProductCategoryProduct> categoryAssignments = new List<ProductCategoryProduct>();
 
     for (Map<String, Object> def : productDefs) {
         Product2 prod;
@@ -270,6 +267,19 @@ private void createProductCatalogAndModels() {
             UnitPrice = (Decimal)def.get('Price')
         );
         insert pbe;
+
+        // --- NEW: Create the assignment record and add it to the list ---
+        ProductCategoryProduct pcp = new ProductCategoryProduct(
+            ProductId = prod.Id,
+            ProductCategoryId = category.Id
+        );
+        categoryAssignments.add(pcp);
+    }
+    
+    // --- NEW: Insert all category assignments in one call ---
+    if (!categoryAssignments.isEmpty()) {
+        insert categoryAssignments;
+        System.debug('SUCCESS: Assigned ' + categoryAssignments.size() + ' products to category "' + category.Name + '".');
     }
 }
 
@@ -310,7 +320,6 @@ private void createTransactionalData() {
     Contact con = getOrCreateContact('Chargent Dev', acc.Id);
     Opportunity opp = getOrCreateOpportunity('RCB Testing Opportunity', acc);
     Quote quote = getOrCreateQuote('RCB Testing Quote', opp, acc, con);
-    addProductsToQuote(quote.Id);
 }
 
 private Account getOrCreateAccount(String name) {
@@ -386,7 +395,6 @@ private Quote getOrCreateQuote(String name, Opportunity opp, Account acc, Contac
     }
 
     Pricebook2 standardPricebook = [SELECT Id FROM Pricebook2 WHERE IsStandard = true LIMIT 1];
-
     Quote q = new Quote(
         Name = name,
         OpportunityId = opp.Id,
@@ -412,58 +420,4 @@ private Quote getOrCreateQuote(String name, Opportunity opp, Account acc, Contac
     insert q;
     System.debug('SUCCESS: Created Quote "' + name + '" with ID: ' + q.Id);
     return q;
-}
-
-private void addProductsToQuote(Id quoteId) {
-    List<QuoteLineItem> existingQLIs = [SELECT Id FROM QuoteLineItem WHERE QuoteId = :quoteId];
-    if (!existingQLIs.isEmpty()) {
-        System.debug('INFO: Quote already has line items. Skipping product addition.');
-        return;
-    }
-
-    Pricebook2 standardPricebook = [SELECT Id FROM Pricebook2 WHERE IsStandard = true LIMIT 1];
-
-    Map<String, Product2> products = new Map<String, Product2>();
-    for(Product2 p : [SELECT Id, ProductCode FROM Product2 WHERE ProductCode IN ('DEMO-001', 'DEMO-002', 'DEMO-003')]) {
-        products.put(p.ProductCode, p);
-    }
-
-    Map<Id, PricebookEntry> pbes = new Map<Id, PricebookEntry>();
-    for (PricebookEntry pbe : [SELECT Id, Product2Id, UnitPrice FROM PricebookEntry WHERE Pricebook2Id = :standardPricebook.Id AND Product2Id IN :products.values()]) {
-        pbes.put(pbe.Product2Id, pbe);
-    }
-
-    List<QuoteLineItem> qlisToInsert = new List<QuoteLineItem>();
-    if (products.get('DEMO-001') != null && pbes.get(products.get('DEMO-001').Id) != null) {
-        qlisToInsert.add(new QuoteLineItem(
-            QuoteId = quoteId,
-            Product2Id = products.get('DEMO-001').Id,
-            PricebookEntryId = pbes.get(products.get('DEMO-001').Id).Id,
-            Quantity = 1,
-            UnitPrice = pbes.get(products.get('DEMO-001').Id).UnitPrice
-        ));
-    }
-    if (products.get('DEMO-002') != null && pbes.get(products.get('DEMO-002').Id) != null) {
-        qlisToInsert.add(new QuoteLineItem(
-            QuoteId = quoteId,
-            Product2Id = products.get('DEMO-002').Id,
-            PricebookEntryId = pbes.get(products.get('DEMO-002').Id).Id,
-            Quantity = 1,
-            UnitPrice = pbes.get(products.get('DEMO-002').Id).UnitPrice
-        ));
-    }
-    if (products.get('DEMO-003') != null && pbes.get(products.get('DEMO-003').Id) != null) {
-        qlisToInsert.add(new QuoteLineItem(
-            QuoteId = quoteId,
-            Product2Id = products.get('DEMO-003').Id,
-            PricebookEntryId = pbes.get(products.get('DEMO-003').Id).Id,
-            Quantity = 1,
-            UnitPrice = pbes.get(products.get('DEMO-003').Id).UnitPrice
-        ));
-    }
-
-    if (!qlisToInsert.isEmpty()) {
-        insert qlisToInsert;
-        System.debug('SUCCESS: Added ' + qlisToInsert.size() + ' products to the Quote.');
-    }
 }

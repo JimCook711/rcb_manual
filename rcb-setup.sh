@@ -35,11 +35,17 @@ while [ $i -gt 0 ]; do
 done
 echo "\nPause complete."
 
+echo "\n>>> 5. Enabeling Billing"
+sfdx project deploy start -d force-app/main/default/settings
+
 echo "\n>>> 4. Assigning Permission Sets..."
 sfdx force:apex:execute -f $PERM_SET_SCRIPT
 
-echo "\n>>> 5. Enabeling Billing"
-sfdx project deploy start -d force-app/main/default/settings
+echo "\n>>> 5. Deploying Context Defintions"
+sfdx project deploy start -d force-app/main/default/contextDefinitions
+
+echo "\n>>> 5. Deploying Expression Set Definitions"
+sfdx project deploy start -d force-app/main/default/expressionSetDefinition
 
 echo "\n>>> 6. Deploying Order To Billing Schedule flow"
 sfdx project deploy start -d force-app/main/default/flows

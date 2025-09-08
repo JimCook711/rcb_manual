@@ -12,6 +12,7 @@ for (PermissionSetAssignment psa : [SELECT PermissionSetId FROM PermissionSetAss
 
 List<String> permSetNames = new List<String>{
     'AnalyticsStoreUser',
+    'BillingAdvancedPaymentAdministrator',
     'BREDesigner',
     'BRERuntime',
     'CorePricingAdmin',
