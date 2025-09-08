@@ -41,16 +41,22 @@ sfdx project deploy start -d force-app/main/default/settings
 echo "\n>>> 5. Assigning Permission Sets..."
 sfdx force:apex:execute -f $PERM_SET_SCRIPT
 
-echo "\n>>> 6. Deploying Order To Billing Schedule flow"
+echo "\n>>> 6. Deploying Context Defintions"
+sfdx project deploy start -d force-app/main/default/contextDefinitions
+
+echo "\n>>> 7. Deploying Expression Set Definitions"
+sfdx project deploy start -d force-app/main/default/expressionSetDefinition
+
+echo "\n>>> 8. Deploying Order To Billing Schedule flow"
 sfdx project deploy start -d force-app/main/default/flows
 
-echo "\n>>> 7. Deploying Page Layouts"
+echo "\n>>> 9. Deploying Page Layouts"
 sfdx project deploy start -d force-app/main/default/layouts
 
-echo "\n>>> 8. Executing Apex script to create core data..."
+echo "\n>>> 10. Executing Apex script to create core data..."
 sfdx force:apex:execute -f $SETUP_DATA_SCRIPT
 
-echo "\n>>> 9. Opening the new scratch org..."
+echo "\n>>> 11. Opening the new scratch org..."
 sfdx force:org:display -u $ORG_ALIAS
 
 echo "\n✅ --- Org setup complete! ---"
