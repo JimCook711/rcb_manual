@@ -353,7 +353,9 @@ private Account getOrCreateAccount(String name) {
         ShippingPostalCode = '94102',
         ShippingCountry = 'USA'
     );
-    insert acc;
+    Database.DMLOptions dml = new Database.DMLOptions();
+    dml.DuplicateRuleHeader.AllowSave = true;
+    Database.insert(acc, dml);
     System.debug('SUCCESS: Created Account "' + name + '" with ID: ' + acc.Id);
     return acc;
 }
@@ -373,7 +375,9 @@ private Contact getOrCreateContact(String name, Id accountId) {
         Phone = '415-275-1115',
         Email = 'test@test.com'
     );
-    insert con;
+    Database.DMLOptions dml = new Database.DMLOptions();
+    dml.DuplicateRuleHeader.AllowSave = true;
+    Database.insert(con, dml);
     System.debug('SUCCESS: Created Contact "' + name + '" with ID: ' + con.Id);
     return con;
 }
