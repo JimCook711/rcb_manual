@@ -410,6 +410,8 @@ private Quote getOrCreateQuote(String name, Opportunity opp, Account acc, Contac
         ExpirationDate = Date.today().addDays(30),
         Description = 'Quote created for ' + acc.Name + ' via automated script.',
         ContactId = con.Id,
+        QuoteAccountId = acc.Id,
+        BillToContactId = con.Id,
         Phone = con.Phone,
         Email = con.Email,
         BillingName = acc.Name,
