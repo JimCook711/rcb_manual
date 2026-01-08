@@ -15,16 +15,8 @@ SETUP_DATA_SCRIPT="scripts/apex/setupData.apex"
 PAUSE_DURATION=60
 
 # --- Script Steps ---
-echo ">>> Starting Revenue Cloud scratch org setup for alias: $ORG_ALIAS"
-
-echo "\n>>> 1. Creating the scratch org..."
-sfdx force:org:create -f $SCRATCH_DEF_FILE -a $ORG_ALIAS -s --durationdays 30
-
-echo "\n>>> 2. Generating a password for the default user..."
-sfdx force:user:password:generate -u $ORG_ALIAS
-
-echo "\n>>> 3. Assigning Permission Set Licenses..."
-sfdx force:apex:execute -f $PERM_LICENSE_SCRIPT
+echo "\n>>> 1. Assigning Permission Set Licenses..."
+sf apex run -f $PERM_LICENSE_SCRIPT
 
 echo "\n>>> Pausing for $PAUSE_DURATION seconds (1 minutes) to allow features to provision..."
 i=$PAUSE_DURATION
@@ -35,22 +27,19 @@ while [ $i -gt 0 ]; do
 done
 echo "\nPause complete."
 
-echo "\n>>> 4. Enabeling Billing"
-sfdx project deploy start -d force-app/main/default/settings
+echo "\n>>> 2. Assigning Permission Sets..."
+sf apex run -f $PERM_SET_SCRIPT
 
-echo "\n>>> 5. Assigning Permission Sets..."
-sfdx force:apex:execute -f $PERM_SET_SCRIPT
+echo "\n>>> 3. Deploying Order To Billing Schedule flow"
+sf project deploy start -d force-app/main/default/flows
 
-echo "\n>>> 6. Deploying Order To Billing Schedule flow"
-sfdx project deploy start -d force-app/main/default/flows
+echo "\n>>> 4. Deploying Page Layouts"
+sf project deploy start -d force-app/main/default/layouts
 
-echo "\n>>> 7. Deploying Page Layouts"
-sfdx project deploy start -d force-app/main/default/layouts
+echo "\n>>> 5. Executing Apex script to create core data..."
+sf apex run -f $SETUP_DATA_SCRIPT
 
-echo "\n>>> 8. Executing Apex script to create core data..."
-sfdx force:apex:execute -f $SETUP_DATA_SCRIPT
-
-echo "\n>>> 9. Opening the new scratch org..."
-sfdx force:org:display -u $ORG_ALIAS
+echo "\n>>> 6. Opening the new scratch org..."
+sf org open -o $ORG_ALIAS
 
 echo "\n✅ --- Org setup complete! ---"
