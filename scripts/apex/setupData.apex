@@ -316,10 +316,18 @@ private ProductSellingModel getOrCreateSellingModel(String name, String type, In
 // --- Part 5: Transactional Data Setup Methods ---
 private void createTransactionalData() {
     System.debug('Starting Transactional Data creation...');
-    Account acc = getOrCreateAccount('Chargent Dev');
-    Contact con = getOrCreateContact('Chargent Dev', acc.Id);
-    Opportunity opp = getOrCreateOpportunity('RCB Testing Opportunity', acc);
-    Quote quote = getOrCreateQuote('RCB Testing Quote', opp, acc, con);
+    
+    // Create first set of transactional data
+    Account acc1 = getOrCreateAccount('RCB Testing Account 1');
+    Contact con1 = getOrCreateContact('RCB Testing Contact 1', acc1.Id);
+    Opportunity opp1 = getOrCreateOpportunity('RCB Testing Opportunity 1', acc1);
+    Quote quote1 = getOrCreateQuote('RCB Testing Quote 1', opp1, acc1, con1);
+    
+    // Create second set of transactional data
+    Account acc2 = getOrCreateAccount('RCB Testing Account 2');
+    Contact con2 = getOrCreateContact('RCB Testing Contact 2', acc2.Id);
+    Opportunity opp2 = getOrCreateOpportunity('RCB Testing Opportunity 2', acc2);
+    Quote quote2 = getOrCreateQuote('RCB Testing Quote 2', opp2, acc2, con2);
 }
 
 private Account getOrCreateAccount(String name) {
